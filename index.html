@@ -67,6 +67,22 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+        /* Custom subtle scrollbar for the gallery specifically */
+        .gallery-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .gallery-scroll::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+        }
+        .gallery-scroll::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.3);
+            border-radius: 10px;
+        }
+        .gallery-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(139, 92, 246, 0.6);
+        }
+
         .fluid-heading {
             font-size: clamp(2.5rem, 7vw, 6rem);
             line-height: 1;
@@ -136,8 +152,11 @@
                     { title: "Web Development", desc: "Custom stores and portfolio pages.", link: "https://drive.google.com/drive/folders/1NxT1O8PtQVTu-V-s9CjDZu3_tLtNsYXq", hasLink: true, icon: "arrow-up-right" },
                     { title: "Visual Art & Photoshop", desc: "Professional thumbnail editing and digital art manipulations.", hasLink: false, icon: "chevron-down" }
                 ],
-                // 1-9 are PNG, 10 is JPG
-                gallery: ["1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png", "9.png", "10.jpg"],
+                // Updated Gallery with 1-9 PNG and 10-16 JPG
+                gallery: [
+                    "1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png", "9.png", 
+                    "10.jpg", "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg", "16.jpg"
+                ],
                 services: [
                     { title: "Video Production", icon: "video", desc: "High-end editing & storytelling" },
                     { title: "Visual Design", icon: "palette", desc: "Thumbnails & social media graphics" },
@@ -159,7 +178,6 @@
 
             const scrollToGallery = () => {
                 if (containerRef.current) {
-                    // Gallery is the 7th section (index 6)
                     containerRef.current.scrollTo({
                         top: window.innerHeight * 6,
                         behavior: 'smooth'
@@ -315,17 +333,44 @@
                             </div>
                         </section>
 
-                        {/* Works Gallery */}
+                        {/* Works Gallery with Scroll Indicator */}
                         <section id="gallery" className="section">
                             <div className="max-w-6xl w-full px-4">
-                                <h2 className="text-4xl md:text-6xl font-black mb-10 text-center uppercase">Some of my <span className="text-indigo-400 italic">Works</span></h2>
-                                <div className="glass p-6 md:p-8 rounded-[3rem] max-h-[70vh] overflow-y-auto no-scrollbar">
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+                                    <h2 className="text-4xl md:text-6xl font-black uppercase text-left">Some of my <br/><span className="text-indigo-400 italic">Works</span></h2>
+                                    <div className="flex items-center gap-2 bg-violet-500/10 border border-violet-500/20 px-4 py-2 rounded-full">
+                                        <div className="w-2 h-2 bg-violet-400 rounded-full animate-pulse"></div>
+                                        <span className="text-xs font-black uppercase tracking-widest text-violet-300">Scroll to explore</span>
+                                    </div>
+                                </div>
+                                
+                                <div className="relative glass p-6 md:p-8 rounded-[3rem]">
+                                    {/* Gallery container with custom scrollbar classes */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto gallery-scroll pr-2">
                                         {userData.gallery.map((img, i) => (
-                                            <div key={i} className="gallery-item">
-                                                <img src={img} alt={`Work ${i+1}`} className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity" />
+                                            <div key={i} className="gallery-item relative group">
+                                                <img 
+                                                    src={img} 
+                                                    alt={`Work ${i+1}`} 
+                                                    loading="lazy"
+                                                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" 
+                                                    onError={(e) => { 
+                                                        e.target.onerror = null;
+                                                        e.target.src = `https://via.placeholder.com/600x400/1e293b/a78bfa?text=Design+${i+1}`;
+                                                    }}
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                                                    <span className="text-xs font-bold tracking-widest uppercase text-white/80">Project {img.split('.')[0]}</span>
+                                                </div>
                                             </div>
                                         ))}
+                                    </div>
+                                    
+                                    {/* Subtle "more hiding" indicator at the bottom */}
+                                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 pointer-events-none">
+                                        <div className="w-12 h-1 bg-white/5 rounded-full overflow-hidden">
+                                            <div className="h-full bg-violet-500/50 w-1/3 animate-[move_2s_infinite_linear]" style={{animationName: 'slide-progress'}}></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -365,5 +410,11 @@
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
+    <style>
+        @keyframes slide-progress {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(300%); }
+        }
+    </style>
 </body>
 </html>
