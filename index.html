@@ -8,6 +8,7 @@
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
@@ -27,7 +28,6 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Animated Background */
         .bg-animate {
             position: fixed;
             inset: 0;
@@ -48,7 +48,6 @@
             100% { transform: translate(15vw, 15vh) scale(1.3); }
         }
 
-        /* Smooth scroll and snap */
         .snap-container {
             height: 100dvh;
             overflow-y: auto;
@@ -61,18 +60,29 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem 1rem;
+            padding: 4rem 1rem;
             position: relative;
         }
 
-        /* Hide scrollbar */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Typography - Improved for PC */
         .fluid-heading {
             font-size: clamp(2.5rem, 7vw, 6rem);
             line-height: 1;
+        }
+
+        .gallery-item {
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            border-radius: 1rem;
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        .gallery-item:hover {
+            transform: scale(1.02);
+            border-color: rgba(167, 139, 250, 0.5);
         }
     </style>
 </head>
@@ -91,16 +101,14 @@
         const Icon = ({ name, className }) => {
             const iconRef = useRef(null);
             useEffect(() => {
-                if (window.lucide && iconRef.current) {
-                    iconRef.current.innerHTML = '';
-                    const i = document.createElement('i');
-                    i.setAttribute('data-lucide', name.toLowerCase());
-                    if (className) i.className = className;
-                    iconRef.current.appendChild(i);
+                if (window.lucide) {
                     window.lucide.createIcons();
                 }
-            }, [name, className]);
-            return <span ref={iconRef} className="inline-flex items-center" />;
+            }, [name]);
+
+            return (
+                <i data-lucide={name.toLowerCase()} className={className}></i>
+            );
         };
 
         const App = () => {
@@ -125,17 +133,28 @@
                     { title: "Blockchain & Crypto", host: "Open Campus", d: "Digital Economy & Currency" }
                 ],
                 projects: [
-                    { title: "Interactive Python Game", desc: "Complex logic with multiple routes.", link: "https://drive.google.com/file/d/1O0ITIxDxZUPRDRuwLoK6Ot91TBbzwA5m/view" },
-                    { title: "Clash Craft YT", desc: "Content creator for games since 2020.", link: "https://www.youtube.com/@channel-clash-craft" },
-                    { title: "Web Development", desc: "Custom stores and portfolio pages.", link: "#" },
-                    { title: "Hardware Archive", desc: "Collection of custom PC builds.", link: "https://drive.google.com/drive/folders/11yhcV8lQy3ThGtOJBIR3dgWszrwJvNyE" }
+                    { title: "Interactive Python Game", desc: "Complex logic with multiple routes.", link: "https://drive.google.com/file/d/1O0ITIxDxZUPRDRuwLoK6Ot91TBbzwA5m/view", hasLink: true },
+                    { title: "Clash Craft YT", desc: "Content creator for games since 2020.", link: "https://www.youtube.com/@channel-clash-craft", hasLink: true },
+                    { title: "Web Development", desc: "Custom stores and portfolio pages.", link: "#", hasLink: false },
+                    { title: "Visual Art & Photoshop", desc: "Professional thumbnail editing and digital art manipulations for my YouTube channel and clients.", hasLink: false }
+                ],
+                gallery: [
+                    "fgb.jpg", "fianl.jpg", "final - Copy.jpg", "final FINAL.jpg", 
+                    "FINAL.jpg", "final2.jpg", "ftgyhb.jpg", "gert.jpg", 
+                    "gujkf.jpg", "Logopit_1688213440262.jpg"
                 ],
                 services: [
-                    { title: "Video Production", icon: "Video", desc: "High-end editing & storytelling" },
-                    { title: "Visual Design", icon: "Palette", desc: "Thumbnails & social media graphics" },
-                    { title: "Custom PC Builds", icon: "Cpu", desc: "Tailored high-performance rigs" },
-                    { title: "Technical Support", icon: "Wrench", desc: "Hardware repair & troubleshooting" }
-                ]
+                    { title: "Video Production", icon: "video", desc: "High-end editing & storytelling" },
+                    { title: "Visual Design", icon: "palette", desc: "Thumbnails & social media graphics" },
+                    { title: "Custom PC Builds", icon: "cpu", desc: "Tailored high-performance rigs" },
+                    { title: "Technical Support", icon: "wrench", desc: "Hardware repair & troubleshooting" }
+                ],
+                links: {
+                    email: "mailto:rqmym43@gmail.com",
+                    linkedin: "https://www.linkedin.com/in/mohamed-elsafty-01146399477/",
+                    github: "https://github.com/Mohamedelsafty5",
+                    youtube: "https://www.youtube.com/@channel-clash-craft"
+                }
             };
 
             const handleScroll = (e) => {
@@ -145,19 +164,17 @@
 
             return (
                 <div className="h-[100dvh] w-full flex flex-col md:flex-row overflow-hidden">
-                    {/* PC Navigation Sidebar */}
-                    <div className="fixed left-8 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col gap-8">
-                        {[0,1,2,3,4,5,6].map(i => (
-                            <div key={i} className={`w-1 rounded-full transition-all duration-500 ${active === i ? 'h-12 bg-violet-400' : 'h-4 bg-white/10'}`} />
+                    <div className="fixed left-8 top-1/2 -translate-y-1/2 z-50 hidden lg:flex flex-col gap-6">
+                        {[0,1,2,3,4,5,6,7].map(i => (
+                            <div key={i} className={`w-1 rounded-full transition-all duration-500 ${active === i ? 'h-10 bg-violet-400' : 'h-3 bg-white/10'}`} />
                         ))}
                     </div>
 
                     <div className="flex-1 snap-container no-scrollbar" onScroll={handleScroll}>
                         
-                        {/* 1. HERO */}
                         <section className="section">
                             <div className="max-w-6xl w-full grid md:grid-cols-2 gap-12 items-center">
-                                <div className="text-center md:text-left order-2 md:order-1">
+                                <div className="text-center md:text-left order-2 md:order-1 px-4">
                                     <h1 className="fluid-heading font-black tracking-tighter uppercase mb-6">
                                         {userData.name}<br/>
                                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-indigo-400 to-blue-400">{userData.surname}</span>
@@ -166,7 +183,7 @@
                                         {userData.tagline}
                                     </p>
                                 </div>
-                                <div className="order-1 md:order-2 flex justify-center">
+                                <div className="order-1 md:order-2 flex justify-center px-4">
                                     <div className="relative glass p-3 rounded-full md:rounded-[3rem]">
                                         <img src="profile.jpg" alt="Profile" 
                                             onError={(e) => e.target.src="https://via.placeholder.com/400?text=Mohamed"}
@@ -176,9 +193,8 @@
                             </div>
                         </section>
 
-                        {/* 2. WHY ME (About) */}
                         <section className="section">
-                            <div className="max-w-4xl w-full">
+                            <div className="max-w-4xl w-full px-4">
                                 <h2 className="text-4xl md:text-6xl font-black mb-10 italic">WHY <span className="text-violet-400">ME?</span></h2>
                                 <div className="glass p-8 md:p-12 rounded-[2.5rem] space-y-8">
                                     <p className="text-lg md:text-xl text-slate-300 leading-relaxed font-light">
@@ -186,32 +202,31 @@
                                     </p>
                                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                         <div className="bg-white/5 p-5 rounded-2xl border border-white/10">
-                                            <span className="text-xs text-violet-400 uppercase font-black block mb-2 tracking-widest">Birth</span>
+                                            <span className="text-[10px] text-violet-400 uppercase font-black block mb-2 tracking-widest">Birth</span>
                                             <span className="text-xl font-bold">{userData.birth}</span>
                                         </div>
                                         <div className="bg-white/5 p-5 rounded-2xl border border-white/10">
-                                            <span className="text-xs text-violet-400 uppercase font-black block mb-2 tracking-widest">Education</span>
+                                            <span className="text-[10px] text-violet-400 uppercase font-black block mb-2 tracking-widest">Education</span>
                                             <span className="text-xl font-bold">Mechanical Eng.</span>
                                         </div>
                                         <div className="bg-white/5 p-5 rounded-2xl border border-white/10">
-                                            <span className="text-xs text-violet-400 uppercase font-black block mb-2 tracking-widest">Languages</span>
-                                            <span className="text-xl font-bold text-sm">EN, AR, FR</span>
+                                            <span className="text-[10px] text-violet-400 uppercase font-black block mb-2 tracking-widest">Languages</span>
+                                            <span className="text-xl font-bold">EN, AR, FR</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </section>
 
-                        {/* 3. SKILLS */}
                         <section className="section">
-                            <div className="max-w-4xl w-full px-4">
+                            <div className="max-w-4xl w-full px-6">
                                 <h2 className="text-4xl md:text-6xl font-black mb-12 text-center">CORE <span className="text-indigo-400">SKILLS</span></h2>
                                 <div className="grid gap-10">
                                     {userData.skills.map((s, i) => (
                                         <div key={i} className="group">
                                             <div className="flex justify-between mb-3 items-end">
                                                 <span className="font-bold text-lg md:text-xl">{s.n}</span>
-                                                <span className="text-violet-400 text-sm font-black uppercase tracking-widest">{s.desc}</span>
+                                                <span className="text-violet-400 text-xs font-black uppercase tracking-widest">{s.desc}</span>
                                             </div>
                                             <div className="h-3 bg-white/5 rounded-full overflow-hidden border border-white/5">
                                                 <div className="h-full bg-gradient-to-r from-violet-600 via-indigo-500 to-blue-500 transition-all duration-[1.5s] ease-out" 
@@ -223,82 +238,103 @@
                             </div>
                         </section>
 
-                        {/* 4. SERVICES */}
                         <section className="section">
-                            <div className="max-w-6xl w-full">
-                                <h2 className="text-4xl md:text-6xl font-black mb-12 text-center italic">SERVICES</h2>
-                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                            <div className="max-w-6xl w-full px-4">
+                                <h2 className="text-4xl md:text-6xl font-black mb-12 text-center italic uppercase">Services</h2>
+                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                                     {userData.services.map((s, i) => (
-                                        <div key={i} className="glass p-8 rounded-[3rem] text-center hover:bg-white/5 transition-all group">
-                                            <div className="w-16 h-16 bg-violet-500/10 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                                                <Icon name={s.icon} className="w-8 h-8 text-violet-400" />
+                                        <div key={i} className="glass p-6 md:p-8 rounded-[2.5rem] text-center hover:bg-white/5 transition-all group">
+                                            <div className="w-14 h-14 bg-violet-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                                                <Icon name={s.icon} className="w-6 h-6 text-violet-400" />
                                             </div>
-                                            <h3 className="font-bold text-xl mb-3">{s.title}</h3>
-                                            <p className="text-slate-500 text-sm leading-tight">{s.desc}</p>
+                                            <h3 className="font-bold text-lg mb-2">{s.title}</h3>
+                                            <p className="text-slate-500 text-xs leading-tight">{s.desc}</p>
                                         </div>
                                     ))}
                                 </div>
                             </div>
                         </section>
 
-                        {/* 5. EDUCATION & COURSES */}
                         <section className="section">
-                            <div className="max-w-6xl w-full">
-                                <h2 className="text-4xl md:text-6xl font-black mb-12">LEARNING <span className="text-blue-400">PATH</span></h2>
+                            <div className="max-w-6xl w-full px-4">
+                                <h2 className="text-4xl md:text-6xl font-black mb-12 uppercase">Learning <span className="text-blue-400">Path</span></h2>
                                 <div className="grid sm:grid-cols-2 gap-6">
                                     {userData.courses.map((c, i) => (
                                         <div key={i} className="glass p-6 md:p-8 rounded-[2rem] border-l-4 border-l-blue-500/50">
                                             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400 mb-2 block">{c.host}</span>
-                                            <h4 className="text-xl font-bold mb-2">{c.title}</h4>
-                                            <p className="text-slate-400 text-sm">{c.d}</p>
+                                            <h4 className="text-lg font-bold mb-2">{c.title}</h4>
+                                            <p className="text-slate-400 text-sm font-light">{c.d}</p>
                                         </div>
                                     ))}
                                 </div>
                             </div>
                         </section>
 
-                        {/* 6. PROJECTS */}
                         <section className="section">
-                            <div className="max-w-6xl w-full">
-                                <h2 className="text-4xl md:text-6xl font-black mb-12 text-right">PROJECT <span className="text-violet-400">VAULT</span></h2>
+                            <div className="max-w-6xl w-full px-4">
+                                <h2 className="text-4xl md:text-6xl font-black mb-12 text-right uppercase italic">Project <span className="text-violet-400">Vault</span></h2>
                                 <div className="grid sm:grid-cols-2 gap-6">
                                     {userData.projects.map((p, i) => (
-                                        <a key={i} href={p.link} target="_blank" className="glass p-8 rounded-[2.5rem] flex justify-between items-center group hover:bg-white/10 transition-all">
-                                            <div>
-                                                <h4 className="text-2xl font-bold group-hover:text-violet-400 transition-colors mb-2">{p.title}</h4>
-                                                <p className="text-slate-500 text-sm">{p.desc}</p>
-                                            </div>
-                                            <div className="w-12 h-12 rounded-full glass flex items-center justify-center group-hover:bg-violet-500 group-hover:text-white transition-all">
-                                                <Icon name="ArrowUpRight" className="w-5 h-5" />
-                                            </div>
-                                        </a>
+                                        <div key={i}>
+                                            {p.hasLink ? (
+                                                <a href={p.link} target="_blank" className="glass p-8 rounded-[2.5rem] flex justify-between items-center group hover:bg-white/10 transition-all h-full">
+                                                    <div>
+                                                        <h4 className="text-xl font-bold group-hover:text-violet-400 transition-colors mb-2">{p.title}</h4>
+                                                        <p className="text-slate-500 text-sm">{p.desc}</p>
+                                                    </div>
+                                                    <div className="w-10 h-10 rounded-full glass flex items-center justify-center group-hover:bg-violet-500 group-hover:text-white transition-all">
+                                                        <Icon name="arrow-up-right" className="w-4 h-4" />
+                                                    </div>
+                                                </a>
+                                            ) : (
+                                                <div className="glass p-8 rounded-[2.5rem] h-full">
+                                                    <h4 className="text-xl font-bold mb-2 text-violet-400">{p.title}</h4>
+                                                    <p className="text-slate-400 text-sm">{p.desc}</p>
+                                                </div>
+                                            )}
+                                        </div>
                                     ))}
                                 </div>
                             </div>
                         </section>
 
-                        {/* 7. CONTACT */}
+                        {/* NEW WORKS GALLERY SECTION */}
                         <section className="section">
-                            <div className="max-w-4xl w-full text-center space-y-16">
-                                <h2 className="fluid-heading font-black italic tracking-tighter leading-none">LET'S<br/>BUILD IT</h2>
+                            <div className="max-w-6xl w-full px-4">
+                                <h2 className="text-4xl md:text-6xl font-black mb-10 text-center">SOME OF MY <span className="text-indigo-400 italic">WORKS</span></h2>
+                                <div className="glass p-6 md:p-8 rounded-[3rem] max-h-[70vh] overflow-y-auto no-scrollbar">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        {userData.gallery.map((img, i) => (
+                                            <div key={i} className="gallery-item">
+                                                <img src={img} alt={`Work ${i+1}`} className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className="section">
+                            <div className="max-w-4xl w-full text-center px-4 space-y-12">
+                                <h2 className="fluid-heading font-black italic tracking-tighter leading-none uppercase">Let's<br/>Build It</h2>
                                 
-                                <div className="flex flex-wrap justify-center gap-8">
-                                    <a href={`mailto:mohamedelsafty@gmail.com`} className="glass w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center hover:scale-110 hover:bg-violet-500/20 transition-all">
-                                        <Icon name="Mail" className="w-8 h-8" />
+                                <div className="flex flex-wrap justify-center gap-6">
+                                    <a href={userData.links.email} className="glass w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center hover:scale-110 hover:bg-violet-500/20 transition-all">
+                                        <Icon name="mail" className="w-6 h-6" />
                                     </a>
-                                    <a href="https://wa.me/201146399477" target="_blank" className="glass w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center hover:scale-110 hover:bg-green-500/20 transition-all text-green-400">
-                                        <Icon name="MessageCircle" className="w-8 h-8" />
+                                    <a href={userData.links.linkedin} target="_blank" className="glass w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center hover:scale-110 hover:bg-blue-600/20 transition-all text-blue-500">
+                                        <Icon name="linkedin" className="w-6 h-6" />
                                     </a>
-                                    <a href="https://github.com/Mohamedelsafty5" target="_blank" className="glass w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center hover:scale-110 hover:bg-slate-500/20 transition-all">
-                                        <Icon name="Github" className="w-8 h-8" />
+                                    <a href={userData.links.github} target="_blank" className="glass w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center hover:scale-110 hover:bg-slate-500/20 transition-all">
+                                        <Icon name="github" className="w-6 h-6" />
                                     </a>
-                                    <a href="https://www.youtube.com/@channel-clash-craft" target="_blank" className="glass w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center hover:scale-110 hover:bg-red-500/20 transition-all text-red-500">
-                                        <Icon name="Youtube" className="w-8 h-8" />
+                                    <a href={userData.links.youtube} target="_blank" className="glass w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center hover:scale-110 hover:bg-red-500/20 transition-all text-red-500">
+                                        <Icon name="youtube" className="w-6 h-6" />
                                     </a>
                                 </div>
 
                                 <div className="pt-10 border-t border-white/5">
-                                    <p className="text-slate-500 font-black tracking-[0.5em] uppercase text-sm">
+                                    <p className="text-slate-500 font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
                                         Alexandria, Egypt • 01146399477
                                     </p>
                                 </div>
