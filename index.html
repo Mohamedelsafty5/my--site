@@ -110,6 +110,7 @@
 
         const App = () => {
             const [active, setActive] = useState(0);
+            const containerRef = useRef(null);
             
             const userData = {
                 name: "MOHAMED",
@@ -130,12 +131,13 @@
                     { title: "Blockchain & Crypto", host: "Open Campus", d: "Digital Economy & Currency" }
                 ],
                 projects: [
-                    { title: "Interactive Python Game", desc: "Complex logic with multiple routes.", link: "https://drive.google.com/file/d/1O0ITIxDxZUPRDRuwLoK6Ot91TBbzwA5m/view", hasLink: true },
-                    { title: "Clash Craft YT", desc: "Content creator for games since 2020.", link: "https://www.youtube.com/@channel-clash-craft", hasLink: true },
-                    { title: "Web Development", desc: "Custom stores and portfolio pages.", link: "#", hasLink: false },
-                    { title: "Visual Art & Photoshop", desc: "Professional thumbnail editing and digital art manipulations.", hasLink: false }
+                    { title: "Interactive Python Game", desc: "Complex logic with multiple routes.", link: "https://drive.google.com/file/d/1O0ITIxDxZUPRDRuwLoK6Ot91TBbzwA5m/view", hasLink: true, icon: "arrow-up-right" },
+                    { title: "Clash Craft YT", desc: "Content creator for games since 2020.", link: "https://www.youtube.com/@channel-clash-craft", hasLink: true, icon: "arrow-up-right" },
+                    { title: "Web Development", desc: "Custom stores and portfolio pages.", link: "https://drive.google.com/drive/folders/1NxT1O8PtQVTu-V-s9CjDZu3_tLtNsYXq", hasLink: true, icon: "arrow-up-right" },
+                    { title: "Visual Art & Photoshop", desc: "Professional thumbnail editing and digital art manipulations.", hasLink: false, icon: "chevron-down" }
                 ],
-                gallery: ["1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg"],
+                // 1-9 are PNG, 10 is JPG
+                gallery: ["1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png", "9.png", "10.jpg"],
                 services: [
                     { title: "Video Production", icon: "video", desc: "High-end editing & storytelling" },
                     { title: "Visual Design", icon: "palette", desc: "Thumbnails & social media graphics" },
@@ -155,6 +157,16 @@
                 setActive(index);
             };
 
+            const scrollToGallery = () => {
+                if (containerRef.current) {
+                    // Gallery is the 7th section (index 6)
+                    containerRef.current.scrollTo({
+                        top: window.innerHeight * 6,
+                        behavior: 'smooth'
+                    });
+                }
+            };
+
             return (
                 <div className="h-[100dvh] w-full flex flex-col md:flex-row overflow-hidden">
                     {/* Navigation Dots */}
@@ -164,7 +176,7 @@
                         ))}
                     </div>
 
-                    <div className="flex-1 snap-container no-scrollbar" onScroll={handleScroll}>
+                    <div ref={containerRef} className="flex-1 snap-container no-scrollbar" onScroll={handleScroll}>
                         
                         {/* Hero Section */}
                         <section className="section">
@@ -283,14 +295,19 @@
                                                         <p className="text-slate-500 text-sm">{p.desc}</p>
                                                     </div>
                                                     <div className="w-10 h-10 rounded-full glass flex items-center justify-center group-hover:bg-violet-500 group-hover:text-white transition-all">
-                                                        <Icon name="arrow-up-right" className="w-4 h-4" />
+                                                        <Icon name={p.icon} className="w-4 h-4" />
                                                     </div>
                                                 </a>
                                             ) : (
-                                                <div className="glass p-8 rounded-[2.5rem] h-full">
-                                                    <h4 className="text-xl font-bold mb-2 text-violet-400">{p.title}</h4>
-                                                    <p className="text-slate-400 text-sm">{p.desc}</p>
-                                                </div>
+                                                <button onClick={scrollToGallery} className="w-full text-left glass p-8 rounded-[2.5rem] flex justify-between items-center group hover:bg-white/10 transition-all h-full cursor-pointer">
+                                                    <div>
+                                                        <h4 className="text-xl font-bold text-violet-400 mb-2">{p.title}</h4>
+                                                        <p className="text-slate-400 text-sm">{p.desc}</p>
+                                                    </div>
+                                                    <div className="w-10 h-10 rounded-full glass flex items-center justify-center group-hover:bg-violet-500 group-hover:text-white transition-all animate-bounce">
+                                                        <Icon name={p.icon} className="w-4 h-4" />
+                                                    </div>
+                                                </button>
                                             )}
                                         </div>
                                     ))}
@@ -299,7 +316,7 @@
                         </section>
 
                         {/* Works Gallery */}
-                        <section className="section">
+                        <section id="gallery" className="section">
                             <div className="max-w-6xl w-full px-4">
                                 <h2 className="text-4xl md:text-6xl font-black mb-10 text-center uppercase">Some of my <span className="text-indigo-400 italic">Works</span></h2>
                                 <div className="glass p-6 md:p-8 rounded-[3rem] max-h-[70vh] overflow-y-auto no-scrollbar">
